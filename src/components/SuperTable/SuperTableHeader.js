@@ -31,6 +31,8 @@ const SuperTableHeader = ({
     onSelectAll()
   }
 
+  console.log(types)
+
   return (
     <TableHead>
       <TableRow>
@@ -47,7 +49,7 @@ const SuperTableHeader = ({
             <TableSortLabel
               active = {orderBy === c.headerName}
               direction={orderBy === c.headerName ? order2 : 'asc'}
-              onClick = {types.length > 0 ? createSortHandler(types[c.field],order,c.headerName) : createSortHandler("number",order,c.headerName)}
+              onClick = {types.length > 0 ? createSortHandler(types[c.field],order,c.field) : createSortHandler("number",order,c.field)}
             >
               {c.headerName}
             </TableSortLabel>

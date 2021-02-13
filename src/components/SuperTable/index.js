@@ -78,11 +78,13 @@ const doSort = (array,type,desc,key) =>{
       }
     break;
   }
+  return array
 }
 
 const SuperTable = (props) => {
   /*   --- defaults ---   */ 
   let props2 = {...props}
+  console.log(props2)
   const defaults = {
     rows:[],
     collums:[],
@@ -97,7 +99,9 @@ const SuperTable = (props) => {
     onDeleteonSort:() => {},
     id:"SuperTable",
     collapseable:false,
-    toolbar:true
+    toolbar:true,
+    rowStyler:null,
+    stickyHeader:true
   }
   useEffect(()=>{
     for(var i in defaults){
@@ -120,13 +124,17 @@ const SuperTable = (props) => {
     onDelete,
     id,
     collapseable,
-    toolbar
+    toolbar,
+    rowStyler,
+    stickyHeader
   } = props2
+  const classes = style()
   /*   --- state ---   */ 
   const [types,settypes] = useState([])
   const [selected,setSelected] = useState([])
   const [order,setOrder] = useState(true)
   const [orderBy,setOrderBy] = useState(collums[0].headerName)
+  const [displayRows,setDisplayRows] = useState(rows)
   const rowCount = rows.length
   /*   --- functions ---   */ 
   const onRowSelect = (id) => {
@@ -144,14 +152,15 @@ const SuperTable = (props) => {
       setSelected([])
       onSelect(selected)
     }
-    
   }
 
   const onSelectHandler = () => {
     onSelect()
   }
   const onSortHandler = (type,order,key) => {
-    doSort(rows,type,order,key)
+    console.log(displayRows,doSort(displayRows,type,order,key))
+    console.log(type,order,key)
+    setDisplayRows(doSort(displayRows,type,order,key))
     setOrderBy(key)
     setOrder(!order)
   }
@@ -166,12 +175,12 @@ const SuperTable = (props) => {
         settypes(prevtypes => ({...prevtypes,[v]:typeof rows[0][v]}))
       })
     }
+    setDisplayRows(rows)
   },[rows])
   
   return (
-    <Paper>
-      <TableContainer>
-        <Table>
+      <TableContainer Component = {Paper} className = {classes.tableContainer}>
+        <Table stickyHeader = {stickyHeader}>
           <SuperTableHeader
             onSelect = {onSelectHandler}
             style = {style}
@@ -189,11 +198,18 @@ const SuperTable = (props) => {
             types = {types}
           />
           <SuperTableBody
-            
+            onSelect = {onSelectHandler}
+            style = {style}
+            deleteable = {deleteable}
+            onDelete = {onDeleteHandler}
+            selected = {selected}
+            selectable = {selectable}
+            collums = {collums}
+            rows = {displayRows}
+            rowStyler = {rowStyler}
           />
         </Table>
       </TableContainer>
-    </Paper>
   )
 }
 
